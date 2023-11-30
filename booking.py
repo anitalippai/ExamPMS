@@ -1,59 +1,58 @@
-from hotel import Hotel
 from datetime import datetime
 
 
 class Booking:
-    def __init__(self, hotel, room_number):
-        self.hotel = hotel
-        self.room_number = room_number
-        self.bookings = []
+    def __init__(self):
+        self.bookings = {}
 
-    def free_room(self, start_date, end_date):
-        for booking in self.bookings:
+    def free_room(self, room_number, start_date, end_date):
+        room_bookings = self.bookings.get(room_number, [])
+        for booking in room_bookings:
             if not (booking['end_date'] < start_date or booking['start_date'] > end_date):
                 return False
         return True
 
-    def book(self, start_date, end_date):
-        if self.free_room(start_date, end_date):
-            self.bookings.append({'start_date': start_date, 'end_date': end_date})
-            return (f"Room {self.room_number} booked between "
+    def book(self, room_number, start_date, end_date):
+        if room_number not in self.bookings:
+            self.bookings[room_number] = []
+
+        if self.free_room(room_number, start_date, end_date):
+            self.bookings[room_number].append({'start_date': start_date, 'end_date': end_date})
+            return (f"Room {room_number} booked between "
                     f"{start_date.strftime('%Y-%m-%d')} - {end_date.strftime('%Y-%m-%d')}.")
         else:
-            return f"Room {self.room_number} is not available in this period"
-        pass
+            return f"Room {room_number} is not available in this period"
 
-    def make_booking(self, room_number, start_date, end_date):
-        for room in self.hotel.rooms:
-            if room.room_number == room_number:
-                return self.book(start_date, end_date)
-        return "Room is not found."
-
-    def booking_dates(self):
+    def booking_dates(self, room_number):
+        room_bookings = self.bookings.get(room_number, [])
         booking_str_list = []
-        for booking in self.bookings:
-            start_datum_str = booking['start_date'].strftime('%Y-%m-%d')
-            end_date_str = booking['veg_datum'].strftime('%Y-%m-%d')
-            booking_str_list.append(f"{start_datum_str} - {end_date_str}")
+        for booking in room_bookings:
+            start_date_str = booking['start_date'].strftime('%Y-%m-%d')
+            end_date_str = booking['end_date'].strftime('%Y-%m-%d')
+            booking_str_list.append(f"{start_date_str} - {end_date_str}")
         return ", ".join(booking_str_list)
 
 
-def new_booking(hotel: Hotel):
-    hotel.upload_rooms()
+def new_booking():
+    booking = Booking()
 
     while True:
         choose = input("What would you like to do? (bookings, book, quit): ")
         if choose == "bookings":
-            print("bookings")
+            room_number = int(input("Enter room number to check bookings: "))
+            booked_dates = booking.booking_dates(room_number)
+            if booked_dates:
+                print(f"Bookings for Room {room_number}: {booked_dates}")
+            else:
+                print(f"No bookings found for Room {room_number}")
         elif choose == "book":
             room_number = int(input("Add room number: "))
             start_date_str = input("Start date (format: yyyy-mm-dd): ")
-            end_datum_str = input("End date (format: yyyy-mm-dd): ")
+            end_date_str = input("End date (format: yyyy-mm-dd): ")
             start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
-            end_date = datetime.strptime(end_datum_str, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
 
-            booking = Booking(hotel, room_number)
-            booked_room = booking.make_booking(room_number, start_date, end_date)
+            booked_room = booking.book(room_number, start_date, end_date)
             print(booked_room)
         elif choose == "quit":
             print("See you soon!")
@@ -62,5 +61,4 @@ def new_booking(hotel: Hotel):
             print("Invalid select.")
 
 
-first_hotel = Hotel('Pythonia')
-new_booking(first_hotel)
+new_booking()
