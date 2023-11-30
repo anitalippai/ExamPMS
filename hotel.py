@@ -13,5 +13,7 @@ class Hotel:
 
     def upload_rooms(self):
         self.add_room(Single(101, 2500, 'sea'))
+        self.add_room(Single(102, 2000, 'garden'))
         self.add_room(Double(201, 5000, 'Breakfast'))
+        self.add_room(Double(202, 6000, 'Half-pension'))
 

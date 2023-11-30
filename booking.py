@@ -1,3 +1,4 @@
+from hotel import Hotel
 from datetime import datetime
 
 
@@ -32,9 +33,16 @@ class Booking:
             booking_str_list.append(f"{start_date_str} - {end_date_str}")
         return ", ".join(booking_str_list)
 
+    def upload_bookings(self):
+        self.book(201, datetime.strptime('2023-12-01', '%Y-%m-%d'), datetime.strptime('2023-12-02', '%Y-%m-%d'))
+        self.book(101, datetime.strptime('2023-12-04', '%Y-%m-%d'), datetime.strptime('2023-12-05', '%Y-%m-%d'))
+        self.book(202, datetime.strptime('2023-12-03', '%Y-%m-%d'), datetime.strptime('2023-12-04', '%Y-%m-%d'))
+
 
 def new_booking():
+    Hotel('Pythonia').upload_rooms()
     booking = Booking()
+    booking.upload_bookings()
 
     while True:
         choose = input("What would you like to do? (bookings, book, quit): ")
