@@ -6,6 +6,3 @@ class Double(Room):
         self.boarding = boarding
     def __str__(self):
         return f"Double room {self.room_number}, {self.boarding}, price: {self.price} / night"
-
-second_room = Double(201, 4500, 'All Inclusive')
-print(second_room)
